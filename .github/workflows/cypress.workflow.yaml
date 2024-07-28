@@ -13,5 +13,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
+          config-file: cypress/config/cypress.config.ts
           build: npm run build
           start: npm start
