@@ -14,5 +14,6 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           config-file: cypress/config/cypress.config.ts
+          browser: chrome
           build: npm run build
           start: npm start
