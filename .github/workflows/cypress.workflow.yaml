@@ -1,9 +1,9 @@
 name: Cypress Tests
 
 on:
-  # push:
-  #   branches:
-  #     - staging
+  push:
+    branches:
+      - staging
   schedule:
     # Runs every 5 minutes
     - cron: "*/5 * * * *"
