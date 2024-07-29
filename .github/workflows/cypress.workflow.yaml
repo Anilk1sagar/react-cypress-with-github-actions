@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - staging
-    # schedule:
-    #     # Wed 1:00 PM UTC = Tues 6 AM PDT, 5 AM PST
-    #     - cron: "0 13 * * 2"
+    schedule:
+      # every 5 minutes
+      - cron: "*/5 * * * *"
 
 jobs:
   cypress-run:
