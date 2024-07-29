@@ -12,10 +12,11 @@ jobs:
   cypress-run:
     runs-on: ubuntu-22.04
     # environment: staging
-    if: github.ref == 'refs/heads/staging'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: staging
 
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
