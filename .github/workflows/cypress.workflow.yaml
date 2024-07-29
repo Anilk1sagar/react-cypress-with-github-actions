@@ -8,6 +8,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
@@ -17,3 +18,23 @@ jobs:
           browser: chrome
           build: npm run build
           start: npm start
+        env:
+          # Recommended: pass the GitHub token lets this action correctly
+          # determine the unique run id necessary to re-run the checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Upload screenshots on failure
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+
+      # Upload videos
+      - name: Upload videos
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-videos
+          path: cypress/videos
