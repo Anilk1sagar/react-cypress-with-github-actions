@@ -22,7 +22,7 @@ jobs:
         env:
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TEST_ENV: anil
+          CYPRESS_TEST_ENV: anil
 
       # Upload screenshots on failure
       - name: Upload screenshots
