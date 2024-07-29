@@ -15,13 +15,14 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           config-file: cypress/config/cypress.config.ts
+          # record: true
           browser: chrome
           build: npm run build
           start: npm start
         env:
-          # Recommended: pass the GitHub token lets this action correctly
-          # determine the unique run id necessary to re-run the checks
+          # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TEST_ENV: anil
 
       # Upload screenshots on failure
       - name: Upload screenshots
@@ -31,10 +32,10 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots
 
-      # Upload videos
-      - name: Upload videos
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cypress-videos
-          path: cypress/videos
+      # # Upload videos
+      # - name: Upload videos
+      #   uses: actions/upload-artifact@v4
+      #   if: always()
+      #   with:
+      #     name: cypress-videos
+      #     path: cypress/videos
