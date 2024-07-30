@@ -27,7 +27,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           config-file: cypress/config/cypress.config.ts
-          config: baseUrl=$BASE_URL
+          config: baseUrl=${{ BASE_URL }}
           # record: true
           browser: chrome
           build: npm run build
