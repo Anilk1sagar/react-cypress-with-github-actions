@@ -63,3 +63,10 @@ jobs:
           name: cypress-tests-html-reports
           path: cypress/reports/html
           retention-days: 30
+
+      # Deploy tests reports to github pages
+      - name: Deploy tests reports to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./cypress/reports
