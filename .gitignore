@@ -26,3 +26,9 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Cypress
+cypress/downloads/
+cypress/screenshots/
+cypress/videos/
+cypress/reports/
