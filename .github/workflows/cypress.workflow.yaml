@@ -75,6 +75,7 @@ jobs:
           publish_dir: ./cypress/reports/html
 
       - name: Save Cypress html reports
+        if: always()
         run: |
           TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
           REPORT_DIR="cypress-html-reports/${TIMESTAMP}"
@@ -82,6 +83,7 @@ jobs:
           cp -R cypress/reports/html/* $REPORT_DIR
 
       - name: Commit and push Cypress HTML reports
+        if: always()
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
