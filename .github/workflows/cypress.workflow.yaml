@@ -24,10 +24,13 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           config-file: cypress/config/cypress.config.ts
+          config: baseUrl=http://localhost:3001
           # record: true
           browser: chrome
           build: npm run build
           start: npm run start
+          # wait-on: "http://localhost:3000"
+          # wait-on-timeout: 120
         env:
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
