@@ -8,8 +8,8 @@ on:
   #   # Runs every 5 minutes
   #   - cron: "*/5 * * * *"
 
-# permissions:
-#   contents: write
+permissions:
+  contents: write
 
 jobs:
   cypress-run:
