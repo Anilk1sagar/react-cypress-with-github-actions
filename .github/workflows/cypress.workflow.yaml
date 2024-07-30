@@ -77,8 +77,8 @@ jobs:
       - name: Save Cypress html reports
         if: always()
         run: |
-          TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
-          REPORT_DIR="cypress-html-reports/${TIMESTAMP}"
+          TIMESTAMP=$(date +"%Y-%m-%d_%H-%M")
+          REPORT_DIR="cypress-html-reports/e2e-tests-report-${TIMESTAMP}"
           mkdir -p $REPORT_DIR
           cp -R cypress/reports/html/* $REPORT_DIR
 
