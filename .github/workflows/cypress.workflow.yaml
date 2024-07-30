@@ -8,9 +8,6 @@ on:
   #   # Runs every 5 minutes
   #   - cron: "*/5 * * * *"
 
-env:
-  BASE_URL: "http://localhost:3000"
-
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -27,13 +24,13 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           config-file: cypress/config/cypress.config.ts
-          config: baseUrl="$BASE_URL"
+          config: baseUrl=http://localhost:3000
           # record: true
           browser: chrome
           build: npm run build
           start: npm run start
-          # wait-on: "http://localhost:3000"
-          # wait-on-timeout: 120
+          wait-on: "http://localhost:3000"
+          wait-on-timeout: 120
         env:
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
