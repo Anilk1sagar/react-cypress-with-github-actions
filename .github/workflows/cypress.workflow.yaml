@@ -44,6 +44,7 @@ jobs:
         with:
           name: cypress-screenshots
           path: cypress/screenshots
+          retention-days: 30
 
       # # Upload videos
       # - name: Upload videos
@@ -52,3 +53,4 @@ jobs:
       #   with:
       #     name: cypress-videos
       #     path: cypress/videos
+      #     retention-days: 30
