@@ -102,37 +102,46 @@ jobs:
         with:
           FOLDER: cypress-tests-reports #directory to generate index
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: "cypress-tests-reports" # upload generated folder
+      # - name: Upload artifact
+      #   uses: actions/upload-pages-artifact@v1
+      #   with:
+      #     path: "cypress-tests-reports" # upload generated folder
 
-      # Send Slack notification on completion
-      - name: Send Slack Notification
-        uses: rtCamp/action-slack-notify@v2
+      # Deploy tests report to github pages
+      - name: Deploy tests report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         if: always()
-        env:
-          SLACK_COLOR: ${{ job.status }}
-          SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "Cypress E2E Tests Report - https://github.com/Anilk1sagar/react-cypress-with-github-actions/actions/runs/${{ github.run_id }}"
-          SLACK_TITLE: Cypress Tests Results
-          SLACK_USERNAME: rtCamp
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: cypress-tests-reports
+          publish_branch: gh-pages
 
-  deploy:
-    needs: cypress-run
-    permissions:
-      pages: write # to deploy to Pages
-      id-token: write # to verify the deployment originates from an appropriate source
+      # # Send Slack notification on completion
+      # - name: Send Slack Notification
+      #   uses: rtCamp/action-slack-notify@v2
+      #   if: always()
+      #   env:
+      #     SLACK_COLOR: ${{ job.status }}
+      #     SLACK_ICON: https://github.com/rtCamp.png?size=48
+      #     SLACK_MESSAGE: "Cypress E2E Tests Report - https://github.com/Anilk1sagar/react-cypress-with-github-actions/actions/runs/${{ github.run_id }}"
+      #     SLACK_TITLE: Cypress Tests Results
+      #     SLACK_USERNAME: rtCamp
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
-    # Deploy to the github-pages environment
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  # deploy:
+  #   needs: cypress-run
+  #   permissions:
+  #     pages: write # to deploy to Pages
+  #     id-token: write # to verify the deployment originates from an appropriate source
 
-    # Specify runner + deployment step
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+  #   # Deploy to the github-pages environment
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+
+  #   # Specify runner + deployment step
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v1
