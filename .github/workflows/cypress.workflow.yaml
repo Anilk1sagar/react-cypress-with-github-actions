@@ -21,7 +21,7 @@ jobs:
           ref: staging
 
       - name: Export API_URL environment variable
-        run: echo "API_URL=https://your-api-url.com" >> $GITHUB_ENV
+        run: echo "API_URL=API_URL=https://jsonplaceholder.typicode.com/" >> $GITHUB_ENV
 
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
