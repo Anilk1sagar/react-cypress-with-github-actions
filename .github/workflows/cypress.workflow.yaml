@@ -59,25 +59,17 @@ jobs:
       #     path: cypress/videos
       #     retention-days: 30
 
-      # Upload tests reports
-      - name: Upload html reports
+      # Upload tests report
+      - name: Upload tests HTML report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cypress-tests-html-reports
+          name: cypress-tests-html-report
           path: cypress/reports/html
           retention-days: 30
 
-      # Deploy tests reports to github pages
-      - name: Deploy tests reports to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        if: always()
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./cypress/reports/html
-
-      # Copy Cypress tests reports to checkout branch
-      - name: Copy Cypress tests reports
+      # Copy Cypress tests report to checkout branch
+      - name: Copy Cypress tests HTML report
         if: always()
         run: |
           TIMESTAMP=$(date +"%Y-%m-%d_%H-%M")
@@ -85,17 +77,25 @@ jobs:
           mkdir -p $REPORT_DIR
           cp -R cypress/reports/html/* $REPORT_DIR
 
-      # Push Cypress tests reports to checkout branch
-      - name: Commit and push Cypress tests reports
+      # Push Cypress tests report to checkout branch
+      - name: Commit and push Cypress tests HTML report
         if: always()
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add cypress-tests-reports/
-          git commit -m "Add Cypress tests reports from ${{ github.run_id }}"
+          git commit -m "Add Cypress tests report from ${{ github.run_id }}"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Deploy tests report to github pages
+      - name: Deploy tests report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./cypress/reports/html
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
