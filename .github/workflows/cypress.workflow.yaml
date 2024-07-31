@@ -8,6 +8,9 @@ on:
   #   # Runs every 5 minutes
   #   - cron: "*/5 * * * *"
 
+env:
+  API_URL: "API_URL=https://jsonplaceholder.typicode.com/"
+
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -36,7 +39,7 @@ jobs:
         env:
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          API_URL: "API_URL=https://jsonplaceholder.typicode.com/"
+          # API_URL: "API_URL=https://jsonplaceholder.typicode.com/"
           # cypress e2e env vars
           TEST_ENV: ${{ vars.TEST_ENV }}
 
