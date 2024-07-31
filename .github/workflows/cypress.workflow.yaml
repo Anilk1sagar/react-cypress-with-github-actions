@@ -30,25 +30,25 @@ jobs:
           # record: true
           browser: chrome
           build: npm run build
-          start: npm start
+          start: API_URL=https://jsonplaceholder.typicode.com/ npm start
           wait-on: "http://localhost:3000"
           wait-on-timeout: 120
         env:
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # API_URL: "API_URL=https://jsonplaceholder.typicode.com/"
-          CYPRESS_API_URL: API_URL=https://jsonplaceholder.typicode.com/
+          # CYPRESS_API_URL: API_URL=https://jsonplaceholder.typicode.com/
           # cypress e2e env vars
           TEST_ENV: ${{ vars.TEST_ENV }}
 
-      # Upload screenshots on failure
-      - name: Upload screenshots
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots
-          retention-days: 30
+      # # Upload screenshots on failure
+      # - name: Upload screenshots
+      #   uses: actions/upload-artifact@v4
+      #   if: failure()
+      #   with:
+      #     name: cypress-screenshots
+      #     path: cypress/screenshots
+      #     retention-days: 30
 
       # # Upload videos
       # - name: Upload videos
@@ -59,40 +59,40 @@ jobs:
       #     path: cypress/videos
       #     retention-days: 30
 
-      # Upload tests reports
-      - name: Upload html reports
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: cypress-tests-html-reports
-          path: cypress/reports/html
-          retention-days: 30
+      # # Upload tests reports
+      # - name: Upload html reports
+      #   uses: actions/upload-artifact@v4
+      #   if: always()
+      #   with:
+      #     name: cypress-tests-html-reports
+      #     path: cypress/reports/html
+      #     retention-days: 30
 
-      # Deploy tests reports to github pages
-      - name: Deploy tests reports to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        if: always()
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./cypress/reports/html
+      # # Deploy tests reports to github pages
+      # - name: Deploy tests reports to GitHub Pages
+      #   uses: peaceiris/actions-gh-pages@v4
+      #   if: always()
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./cypress/reports/html
 
-      # Copy Cypress tests reports to checkout branch
-      - name: Copy Cypress tests reports
-        if: always()
-        run: |
-          TIMESTAMP=$(date +"%Y-%m-%d_%H-%M")
-          REPORT_DIR="cypress-tests-reports/e2e/tests-report-${TIMESTAMP}"
-          mkdir -p $REPORT_DIR
-          cp -R cypress/reports/html/* $REPORT_DIR
+      # # Copy Cypress tests reports to checkout branch
+      # - name: Copy Cypress tests reports
+      #   if: always()
+      #   run: |
+      #     TIMESTAMP=$(date +"%Y-%m-%d_%H-%M")
+      #     REPORT_DIR="cypress-tests-reports/e2e/tests-report-${TIMESTAMP}"
+      #     mkdir -p $REPORT_DIR
+      #     cp -R cypress/reports/html/* $REPORT_DIR
 
-      # Push Cypress tests reports to checkout branch
-      - name: Commit and push Cypress tests reports
-        if: always()
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add cypress-tests-reports/
-          git commit -m "Add Cypress tests reports from ${{ github.run_id }}"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # # Push Cypress tests reports to checkout branch
+      # - name: Commit and push Cypress tests reports
+      #   if: always()
+      #   run: |
+      #     git config --global user.name 'github-actions[bot]'
+      #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      #     git add cypress-tests-reports/
+      #     git commit -m "Add Cypress tests reports from ${{ github.run_id }}"
+      #     git push
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
