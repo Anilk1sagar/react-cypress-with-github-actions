@@ -13,4 +13,16 @@ describe("Home page should visible and work", () => {
 
     cy.getBySel("count-text").should("exist").and("have.text", "1");
   });
+
+  it("users should be loaded from proxy api", () => {
+    cy.intercept("GET", "/api/users").as("users");
+
+    cy.wait("@users");
+
+    cy.getBySel("users-list")
+      .should("exist")
+      .within(() => {
+        cy.get("li").should("exist").and("have.length", 10);
+      });
+  });
 });
