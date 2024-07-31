@@ -89,13 +89,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Deploy tests report to github pages
-      - name: Deploy tests report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        if: always()
+      # # Deploy tests report to github pages
+      # - name: Deploy tests report to GitHub Pages
+      #   uses: peaceiris/actions-gh-pages@v4
+      #   if: always()
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./cypress/reports
+
+      - name: Generate Directory Listings
+        uses: jayanta525/github-pages-directory-listing@v4.0.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./cypress/reports
+          FOLDER: cypress-tests-reports #directory to generate index
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: "cypress-tests-reports" # upload generated folder
 
       # Send Slack notification on completion
       - name: Send Slack Notification
@@ -108,3 +118,21 @@ jobs:
           SLACK_TITLE: Cypress Tests Results
           SLACK_USERNAME: rtCamp
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+  deploy:
+    needs: cypress-run
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    # Specify runner + deployment step
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
