@@ -97,7 +97,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./cypress/reports
 
-      - name: Slack Notification
+      # Send Slack notification on completion
+      - name: Send Slack Notification
         uses: rtCamp/action-slack-notify@v2
         if: always()
         env:
