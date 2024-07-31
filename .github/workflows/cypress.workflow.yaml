@@ -42,7 +42,7 @@ jobs:
           TEST_ENV: ${{ vars.TEST_ENV }}
 
       # Upload screenshots on failure
-      - name: Upload screenshots
+      - name: Upload screenshots artifact
         uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -51,7 +51,7 @@ jobs:
           retention-days: 30
 
       # # Upload videos
-      # - name: Upload videos
+      # - name: Upload videos artifact
       #   uses: actions/upload-artifact@v4
       #   if: always()
       #   with:
@@ -59,8 +59,8 @@ jobs:
       #     path: cypress/videos
       #     retention-days: 30
 
-      # Upload tests report
-      - name: Upload tests HTML report
+      # Upload Cypress tests report
+      - name: Upload Cypress tests HTML report artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -89,26 +89,28 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # # Deploy tests report to github pages
-      # - name: Deploy tests report to GitHub Pages
+      # # Deploy Cypress tests report to github pages
+      # - name: Deploy Cypress tests report to GitHub Pages
       #   uses: peaceiris/actions-gh-pages@v4
       #   if: always()
       #   with:
       #     github_token: ${{ secrets.GITHUB_TOKEN }}
       #     publish_dir: ./cypress/reports
 
-      - name: Generate Directory Listings
+      # Generate directory listings for Cypress tests reports
+      - name: Generate directory listings for Cypress tests reports
         uses: jayanta525/github-pages-directory-listing@v4.0.0
         with:
           FOLDER: cypress-tests-reports #directory to generate index
 
-      # - name: Upload artifact
-      #   uses: actions/upload-pages-artifact@v1
-      #   with:
-      #     path: "cypress-tests-reports" # upload generated folder
+      # Upload Cypress tests reports directory listings
+      - name: Upload Cypress tests reports directory listings artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: "cypress-tests-reports" # upload generated folder
 
-      # Deploy tests report to github pages
-      - name: Deploy tests report to GitHub Pages
+      # Deploy Cypress tests report to github pages
+      - name: Deploy Cypress tests report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         if: always()
         with:
@@ -127,21 +129,3 @@ jobs:
       #     SLACK_TITLE: Cypress Tests Results
       #     SLACK_USERNAME: rtCamp
       #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-
-  # deploy:
-  #   needs: cypress-run
-  #   permissions:
-  #     pages: write # to deploy to Pages
-  #     id-token: write # to verify the deployment originates from an appropriate source
-
-  #   # Deploy to the github-pages environment
-  #   environment:
-  #     name: github-pages
-  #     url: ${{ steps.deployment.outputs.page_url }}
-
-  #   # Specify runner + deployment step
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: Deploy to GitHub Pages
-  #       id: deployment
-  #       uses: actions/deploy-pages@v1
