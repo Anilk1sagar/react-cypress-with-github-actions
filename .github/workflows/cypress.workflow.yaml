@@ -20,9 +20,6 @@ jobs:
         with:
           ref: staging
 
-      - name: Export API_URL environment variable
-        run: echo "API_URL=API_URL=https://jsonplaceholder.typicode.com/" >> $GITHUB_ENV
-
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress E2E run
@@ -33,14 +30,13 @@ jobs:
           # record: true
           browser: chrome
           build: npm run build
-          start: npm start
+          start: export API_URL=https://jsonplaceholder.typicode.com/ && npm start
           wait-on: "http://localhost:3000"
           wait-on-timeout: 60
         env:
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # API_URL: "API_URL=https://jsonplaceholder.typicode.com/"
-          API_URL: ${{ secrets.API_URL }}
           # cypress e2e env vars
           TEST_ENV: ${{ vars.TEST_ENV }}
 
