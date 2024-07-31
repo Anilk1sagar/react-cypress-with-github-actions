@@ -30,7 +30,7 @@ jobs:
           # record: true
           browser: chrome
           build: npm run build
-          start: npm run start
+          start: API_URL=https://jsonplaceholder.typicode.com/ npm run start
           wait-on: "http://localhost:3000"
           wait-on-timeout: 120
         env:
