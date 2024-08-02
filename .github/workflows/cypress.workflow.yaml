@@ -20,6 +20,13 @@ jobs:
         with:
           ref: staging
 
+      # Create .env file from github action secret
+      - name: Create .env file from github action secret
+        env:
+          E2E_ENV_FILE: ${{ secrets.E2E_ENV_FILE }}
+        run: |
+          echo $E2E_ENV_FILE > cypress/.env
+
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress E2E run
@@ -39,7 +46,7 @@ jobs:
           # Server env vars
           API_URL: https://jsonplaceholder.typicode.com/
           # cypress e2e env vars
-          TEST_ENV: ${{ vars.TEST_ENV }}
+          # TEST_ENV: ${{ vars.TEST_ENV }}
 
       # Upload screenshots on failure
       - name: Upload screenshots artifact
