@@ -7,12 +7,13 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "cy:run": "cypress run --browser chrome --config-file ./cypress/config/cypress.config.ts",
     "merge-cy:reports": "mochawesome-merge cypress/reports/mocha/*.json > cypress/reports/report.json && rm -R -f cypress/reports/mocha",
     "generate-cy:report": "marge cypress/reports/report.json -f report -i -o cypress/reports",
     "pre-test-e2e": "rm -R -f cypress/reports",
     "post-test-e2e": "npm run merge-cy:reports && npm run generate-cy:report",
-    "test-e2e": "npm run pre-test-e2e && cypress run --browser chrome --config-file ./cypress/config/cypress.config.ts || npm run post-test-e2e",
-    "test-e2e-gui": "npm run pre-test-e2e && cypress run --browser chrome --headed --config-file ./cypress/config/cypress.config.ts || npm run post-test-e2e",
+    "test-e2e": "run-s -c pre-test-e2e cy:run post-test-e2e",
+    "test-e2e-gui": "run-s -c pre-test-e2e 'cy:run -- --headed' post-test-e2e",
     "test-e2e-open": "cypress open --browser chrome --config-file ./cypress/config/cypress.config.ts"
   },
   "eslintConfig": {
@@ -56,6 +57,7 @@
     "mochawesome": "^7.1.3",
     "mochawesome-merge": "^4.3.0",
     "mochawesome-report-generator": "^6.2.0",
+    "npm-run-all": "^4.1.5",
     "typescript": "^4.9.5"
   }
 }
