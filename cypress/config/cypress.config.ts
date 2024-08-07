@@ -8,12 +8,20 @@ export default defineConfig({
   retries: {
     runMode: 2,
   },
-  reporter: "cypress-mochawesome-reporter",
+  reporter: "mochawesome",
   reporterOptions: {
-    charts: true,
+    reportDir: "cypress/reports/mocha",
+    reportFilename: "report-[datetime]",
     reportPageTitle: "Cypress Tests Report",
-    embeddedScreenshots: true,
-    inlineAssets: true,
+    timestamp: "longDate",
+    inline: true,
+    charts: true,
+    // disable overwrite to generate many JSON reports
+    overwrite: false,
+    // do not generate intermediate HTML reports
+    html: false,
+    // generate intermediate JSON reports
+    json: true,
   },
   e2e: {
     baseUrl: "http://localhost:3000",
@@ -21,7 +29,7 @@ export default defineConfig({
       testEnv: process.env.TEST_ENV,
     },
     setupNodeEvents(on, config) {
-      require("cypress-mochawesome-reporter/plugin")(on);
+      //
     },
   },
 });
