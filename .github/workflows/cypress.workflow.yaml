@@ -22,8 +22,9 @@ jobs:
 
       - name: Generate JSON with folder list
         run: |
-          FOLDER_LIST=$(find ./cypress-tests-reports/e2e/ -type d -not -path '*/\.*' -not -path './.git/*' | tail -n +2)
-          echo "$FOLDER_LIST" | jq -R -s -c 'split("\n") | map(select(length > 0))' > folder-list.json
+          TARGET_DIR="./cypress-tests-reports/e2e"
+          FOLDER_LIST=$(find "$TARGET_DIR" -mindepth 1 -type d -not -path '*/\.*')
+          echo "$FOLDER_LIST" | sed "s|^$TARGET_DIR/||" | jq -R -s -c 'split("\n") | map(select(length > 0))' > folder-list.json
 
       - name: Upload folder list artifact
         uses: actions/upload-artifact@v4
