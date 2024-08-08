@@ -23,14 +23,15 @@ jobs:
       - name: Generate JSON with folder list
         run: |
           TARGET_DIR="./cypress-tests-reports/e2e"
+          REPORT_DIR="./cypress/dashboard/reports/e2e/tests-list.json"
           FOLDER_LIST=$(find "$TARGET_DIR" -mindepth 1 -type d -not -path '*/\.*')
-          echo "$FOLDER_LIST" | sed "s|^$TARGET_DIR/||" | jq -R -s -c 'split("\n") | map(select(length > 0))' > folder-list.json
+          echo "$FOLDER_LIST" | sed "s|^$TARGET_DIR/||" | jq -R -s -c 'split("\n") | map(select(length > 0))' > $REPORT_DIR
 
       - name: Upload folder list artifact
         uses: actions/upload-artifact@v4
         with:
-          name: folder-list
-          path: folder-list.json
+          name: e2e-tests-reports-list
+          path: cypress/dashboard/reports/e2e/tests-list.json
 
       # # Create .env file from github action secret
       # - name: Create .env file from github action secret
