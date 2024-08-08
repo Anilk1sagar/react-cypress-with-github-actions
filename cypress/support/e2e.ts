@@ -14,7 +14,32 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import "./commands";
-
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+import * as addContext from "mochawesome/addContext";
+import { Context } from "mocha";
+import "./commands";
+
+/**
+ * Attach screenshots to the tests report
+ */
+Cypress.on("test:after:run", (test, runnable) => {
+  const testCtx = { test } as Context;
+
+  // Add screenshots to tests report
+  if (test.state === "failed") {
+    // Construct the screenshot file name
+    const screenshotFileNames = [
+      `${runnable.parent.title} -- ${test.title} (failed).png`,
+      `${runnable.parent.title} -- ${test.title} (failed) (attempt 2).png`,
+      `${runnable.parent.title} -- ${test.title} (failed) (attempt 3).png`,
+    ];
+
+    // Construct the screenshot file path and add to context
+    screenshotFileNames.forEach((screenshotFileName) => {
+      const screenshotFilePath = `../screenshots/${Cypress.spec.name}/${screenshotFileName}`;
+      addContext(testCtx, screenshotFilePath);
+    });
+  }
+});
