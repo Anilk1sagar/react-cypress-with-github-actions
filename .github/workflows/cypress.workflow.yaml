@@ -22,8 +22,8 @@ jobs:
 
       - name: Generate JSON with folder list
         run: |
-          FOLDER_LIST=$(find . -type d -not -path '*/\.*' -not -path './.git/*' -print0 | xargs -0 -I {} basename {})
-          echo $FOLDER_LIST | jq -R -s -c 'split("\n") | map(select(length > 0))' > folder-list.json
+          FOLDER_LIST=$(find . -type d -not -path '*/\.*' -not -path './.git/*')
+          echo "$FOLDER_LIST" | jq -R -s -c 'split("\n") | map(select(length > 0))' > folder-list.json
 
       - name: Upload folder list artifact
         uses: actions/upload-artifact@v3
