@@ -38,7 +38,7 @@ Cypress.on("test:after:run", (test, runnable) => {
 
     // Construct the screenshot file path and add to context
     screenshotFileNames.forEach((screenshotFileName) => {
-      const screenshotFilePath = `../screenshots/${Cypress.spec.name}/${screenshotFileName}`;
+      const screenshotFilePath = `./assets/screenshots/${Cypress.spec.name}/${screenshotFileName}`;
       addContext(testCtx, screenshotFilePath);
     });
   }
