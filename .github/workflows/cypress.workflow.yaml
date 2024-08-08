@@ -3,7 +3,7 @@ name: Cypress Tests
 on:
   push:
     branches:
-      - staging
+      - monitoring-dashboard
   # schedule:
   #   # Runs every 5 minutes
   #   - cron: "*/5 * * * *"
@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: staging
+          ref: monitoring-dashboard
 
       - name: Generate JSON with folder list
         run: |
