@@ -7,7 +7,7 @@ describe("Home page should visible and work", () => {
     const testEnv = Cypress.env("testEnv");
     cy.wrap(testEnv).should("eq", "anil");
 
-    cy.getBySel("count-text").should("exist").and("have.text", "1");
+    cy.getBySel("count-text").should("exist").and("have.text", "0");
 
     cy.getBySel("count-btn").should("exist").and("have.text", "Count ++").click();
 
