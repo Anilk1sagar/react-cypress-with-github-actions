@@ -86,10 +86,13 @@ function renderReportsList(reportsData) {
     const { folder, data } = report;
     const { stats } = data;
 
+    // Clone report card element
     const clonedReportCard = reportCard.cloneNode(true);
     if (index === 0) {
       reportsList.innerHTML = "";
     }
+
+    // Attach report card to list
     reportsList.appendChild(clonedReportCard);
 
     // Add end date time to the report card
@@ -97,7 +100,10 @@ function renderReportsList(reportsData) {
     runEnd.setAttribute("id", `run-end-${index}`);
     runEnd.textContent = getFormattedDateTime(stats.end);
 
-    document.getElementById("view-report-btn").setAttribute("href", `./reports/e2e/${folder}`);
+    // Update view report button url in the report card
+    const viewReportBtn = document.getElementById("view-report-btn");
+    viewReportBtn.setAttribute("id", `run-end-${index}`);
+    viewReportBtn.setAttribute("href", `./reports/e2e/${folder}`);
 
     // Add passing to the report card
     const runPassing = document.getElementById("run-passing");
