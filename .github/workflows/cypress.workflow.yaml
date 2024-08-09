@@ -89,7 +89,7 @@ jobs:
         run: |
           TARGET_DIR="./cypress/dashboard/reports/e2e"
           REPORT_DIR="./cypress/dashboard/reports/e2e/tests-list.json"
-          FOLDER_LIST=$(find "$TARGET_DIR" -mindepth 1 -type d -not -path '*/\.*')
+          FOLDER_LIST=$(find "$TARGET_DIR" -mindepth 1 -maxdepth 1 -type d -not -path '*/\.*')
           echo "$FOLDER_LIST" | sed "s|^$TARGET_DIR/||" | jq -R -s -c 'split("\n") | map(select(length > 0))' > $REPORT_DIR
 
       # Push Cypress tests report to checkout branch
