@@ -76,7 +76,7 @@ jobs:
           retention-days: 30
 
       # Copy Cypress tests report to checkout branch
-      - name: Copy Cypress tests HTML report
+      - name: Copy Cypress HTML report to dashboard reports folder
         if: always()
         run: |
           TIMESTAMP=$(date +"%Y-%m-%d_%H-%M")
@@ -85,6 +85,7 @@ jobs:
           cp -R cypress/reports/* $REPORT_DIR
 
       - name: Generate JSON file for e2e reports folders list
+        if: always()
         run: |
           TARGET_DIR="./cypress/dashboard/reports/e2e"
           REPORT_DIR="./cypress/dashboard/reports/e2e/tests-list.json"
