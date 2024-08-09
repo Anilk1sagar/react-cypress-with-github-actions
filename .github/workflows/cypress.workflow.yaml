@@ -20,55 +20,42 @@ jobs:
         with:
           ref: monitoring-dashboard
 
-      - name: Generate JSON with folder list
+      # Create .env file from github action secret
+      - name: Create .env file from github action secret
+        env:
+          E2E_ENV_FILE: ${{ secrets.E2E_ENV_FILE }}
         run: |
-          TARGET_DIR="./cypress-tests-reports/e2e"
-          REPORT_DIR="./cypress/dashboard/reports/e2e/tests-list.json"
-          FOLDER_LIST=$(find "$TARGET_DIR" -mindepth 1 -type d -not -path '*/\.*')
-          echo "$FOLDER_LIST" | sed "s|^$TARGET_DIR/||" | jq -R -s -c 'split("\n") | map(select(length > 0))' > $REPORT_DIR
+          echo $E2E_ENV_FILE > cypress/.env
 
-      - name: Upload folder list artifact
-        uses: actions/upload-artifact@v4
+      # Install npm dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress E2E run
+        uses: cypress-io/github-action@v6
         with:
-          name: e2e-tests-reports-list
-          path: cypress/dashboard/reports/e2e/tests-list.json
+          config-file: cypress/config/cypress.config.ts
+          config: baseUrl=http://localhost:3000
+          # record: true
+          browser: chrome
+          build: npm run build
+          start: npm start
+          wait-on: "http://localhost:3000"
+          wait-on-timeout: 60
+        env:
+          # pass GitHub token to allow accurately detecting a build vs a re-run build
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Server env vars
+          API_URL: https://jsonplaceholder.typicode.com/
+          # cypress e2e env vars
+          # TEST_ENV: ${{ vars.TEST_ENV }}
 
-      # # Create .env file from github action secret
-      # - name: Create .env file from github action secret
-      #   env:
-      #     E2E_ENV_FILE: ${{ secrets.E2E_ENV_FILE }}
-      #   run: |
-      #     echo $E2E_ENV_FILE > cypress/.env
-
-      # # Install npm dependencies, cache them correctly
-      # # and run all Cypress tests
-      # - name: Cypress E2E run
-      #   uses: cypress-io/github-action@v6
-      #   with:
-      #     config-file: cypress/config/cypress.config.ts
-      #     config: baseUrl=http://localhost:3000
-      #     # record: true
-      #     browser: chrome
-      #     build: npm run build
-      #     start: npm start
-      #     wait-on: "http://localhost:3000"
-      #     wait-on-timeout: 60
-      #   env:
-      #     # pass GitHub token to allow accurately detecting a build vs a re-run build
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     # Server env vars
-      #     API_URL: https://jsonplaceholder.typicode.com/
-      #     # cypress e2e env vars
-      #     # TEST_ENV: ${{ vars.TEST_ENV }}
-
-      # # Upload screenshots on failure
-      # - name: Upload screenshots artifact
-      #   uses: actions/upload-artifact@v4
-      #   if: failure()
-      #   with:
-      #     name: cypress-screenshots
-      #     path: cypress/screenshots
-      #     retention-days: 30
+      # Upload screenshots on failure
+      - name: Upload screenshots artifact
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          retention-days: 30
 
       # # # Upload videos
       # # - name: Upload videos artifact
@@ -79,35 +66,42 @@ jobs:
       # #     path: cypress/videos
       # #     retention-days: 30
 
-      # # Upload Cypress tests report
-      # - name: Upload Cypress tests HTML report artifact
-      #   uses: actions/upload-artifact@v4
-      #   if: always()
-      #   with:
-      #     name: cypress-tests-html-report
-      #     path: cypress/reports/html
-      #     retention-days: 30
+      # Upload Cypress report
+      - name: Upload Cypress HTML report artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-html-report
+          path: cypress/reports
+          retention-days: 30
 
-      # # Copy Cypress tests report to checkout branch
-      # - name: Copy Cypress tests HTML report
-      #   if: always()
-      #   run: |
-      #     TIMESTAMP=$(date +"%Y-%m-%d_%H-%M")
-      #     REPORT_DIR="cypress-tests-reports/e2e/tests-report-${TIMESTAMP}"
-      #     mkdir -p $REPORT_DIR
-      #     cp -R cypress/reports/html/* $REPORT_DIR
+      # Copy Cypress tests report to checkout branch
+      - name: Copy Cypress tests HTML report
+        if: always()
+        run: |
+          TIMESTAMP=$(date +"%Y-%m-%d_%H-%M")
+          REPORT_DIR="cypress/dashboard/reports/e2e/tests-report-${TIMESTAMP}"
+          mkdir -p $REPORT_DIR
+          cp -R cypress/reports/* $REPORT_DIR
 
-      # # Push Cypress tests report to checkout branch
-      # - name: Commit and push Cypress tests HTML report
-      #   if: always()
-      #   run: |
-      #     git config --global user.name 'github-actions[bot]'
-      #     git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-      #     git add cypress-tests-reports/
-      #     git commit -m "Add Cypress tests report from ${{ github.run_id }}"
-      #     git push
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate JSON file for e2e reports folders list
+        run: |
+          TARGET_DIR="./cypress/dashboard/reports/e2e"
+          REPORT_DIR="./cypress/dashboard/reports/e2e/tests-list.json"
+          FOLDER_LIST=$(find "$TARGET_DIR" -mindepth 1 -type d -not -path '*/\.*')
+          echo "$FOLDER_LIST" | sed "s|^$TARGET_DIR/||" | jq -R -s -c 'split("\n") | map(select(length > 0))' > $REPORT_DIR
+
+      # Push Cypress tests report to checkout branch
+      - name: Commit and push Cypress dashboard e2e reports
+        if: always()
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add cypress/dashboard/reports/e2e
+          git commit -m "Add Cypress e2e tests report from ${{ github.run_id }}"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # # Generate directory listings for Cypress tests reports
       # - name: Generate directory listings for Cypress tests reports
@@ -123,14 +117,14 @@ jobs:
       #     path: "cypress-tests-reports" # upload generated folder
       #     retention-days: 30
 
-      # # Deploy Cypress tests reports to github pages
-      # - name: Deploy Cypress tests reports to GitHub Pages
-      #   uses: peaceiris/actions-gh-pages@v4
-      #   if: always()
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: cypress-tests-reports
-      #     publish_branch: gh-pages
+      # Deploy Cypress tests reports to github pages
+      - name: Deploy Cypress dashboard to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: cypress/dashboard
+          publish_branch: gh-pages
 
       # # Send Slack notification on completion
       # - name: Send Slack Notification
