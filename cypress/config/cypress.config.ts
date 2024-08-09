@@ -1,5 +1,8 @@
 import { defineConfig } from "cypress";
 import { config as dotenvConfig } from "dotenv";
+import { mergeAndGenerateReport } from "support/scripts/generate-report";
+import * as fs from "fs";
+import * as path from "path";
 
 dotenvConfig({ path: "../.env" });
 
@@ -11,17 +14,9 @@ export default defineConfig({
   reporter: "mochawesome",
   reporterOptions: {
     reportDir: "cypress/reports/mocha",
-    reportFilename: "report-[datetime]",
-    reportPageTitle: "Cypress Tests Report",
-    timestamp: "longDate",
-    inline: true,
-    charts: true,
-    // disable overwrite to generate many JSON reports
-    overwrite: false,
-    // do not generate intermediate HTML reports
-    html: false,
-    // generate intermediate JSON reports
-    json: true,
+    overwrite: false, // disable overwrite to generate many JSON reports
+    html: false, // do not generate intermediate HTML reports
+    json: true, // generate intermediate JSON reports
   },
   e2e: {
     baseUrl: "http://localhost:3000",
@@ -29,7 +24,16 @@ export default defineConfig({
       testEnv: process.env.TEST_ENV,
     },
     setupNodeEvents(on, config) {
-      //
+      on("before:run", (_runDetails) => {
+        // Remove the reports directory before running the tests
+        fs.rmSync(path.resolve(__dirname, "../reports"), { recursive: true, force: true });
+      });
+
+      on("after:run", async (results) => {
+        if (results) {
+          mergeAndGenerateReport();
+        }
+      });
     },
   },
 });
