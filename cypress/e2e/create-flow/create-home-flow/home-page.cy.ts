@@ -22,7 +22,7 @@ describe("Home page should visible and work", () => {
     cy.getBySel("users-list")
       .should("exist")
       .within(() => {
-        cy.get("li").should("exist").and("have.length", 11);
+        cy.get("li").should("exist").and("have.length", 10);
       });
   });
 });

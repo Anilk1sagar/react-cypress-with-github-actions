@@ -26,6 +26,7 @@ import "./commands";
  */
 Cypress.on("test:after:run", (test, runnable) => {
   const testCtx = { test } as Context;
+  const screenshotsFolderPath = Cypress.spec.relative.split("/").slice(2).join("/");
 
   // Add screenshots to tests report
   if (test.state === "failed") {
@@ -38,7 +39,7 @@ Cypress.on("test:after:run", (test, runnable) => {
 
     // Construct the screenshot file path and add to context
     screenshotFileNames.forEach((screenshotFileName) => {
-      const screenshotFilePath = `./assets/screenshots/${Cypress.spec.name}/${screenshotFileName}`;
+      const screenshotFilePath = `./assets/screenshots/${screenshotsFolderPath}/${screenshotFileName}`;
       addContext(testCtx, screenshotFilePath);
     });
   }
