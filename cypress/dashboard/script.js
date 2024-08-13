@@ -1,9 +1,3 @@
-/*
- * Copyright 2024 StarTree Inc.
- *
- * All rights reserved. Confidential and proprietary information of StarTree Inc.
- */
-
 function getReportsFolders() {
   return fetch("./reports/e2e/tests-list.json")
     .then((response) => response.json())
@@ -19,7 +13,9 @@ async function getReportsData() {
       .then((data) => ({ folder, data })); // Return both folder name and data
   });
 
-  const reportsData = await Promise.all(fetchPromises);
+  let reportsData = await Promise.allSettled(fetchPromises);
+
+  reportsData = reportsData.filter((item) => item.status === "fulfilled").map((item) => item.value);
 
   // Sort reports recent to oldest
   reportsData.sort((a, b) => b.folder.localeCompare(a.folder));
@@ -35,14 +31,14 @@ function formatDuration(ms) {
   let formattedTime = "";
 
   if (hours > 0) {
-    formattedTime += hours + " hour" + (hours > 1 ? "s " : " ");
+    formattedTime += hours + "h ";
   }
   if (minutes > 0) {
-    formattedTime += minutes + " minute" + (minutes > 1 ? "s " : " ");
+    formattedTime += minutes + "m ";
   }
   if (seconds > 0 || (hours === 0 && minutes === 0)) {
     // Show seconds if they are > 0, or if both hours and minutes are 0
-    formattedTime += seconds + " second" + (seconds > 1 ? "s" : "");
+    formattedTime += seconds + "s ";
   }
 
   return formattedTime.trim();
@@ -76,11 +72,14 @@ function getFormattedDateTime(utcDate) {
   return formattedIST;
 }
 
-function renderReportsChart(reportsData) {
+function renderReportsChart(reports) {
+  let reportsData = [...reports];
+  reportsData = reportsData.reverse();
+
   const xAxisData = reportsData.map((report) => {
     const date = new Date(report.data.stats.end);
 
-    const formattedDate = new Intl.DateTimeFormat("en-US", {
+    const formattedDate = new Intl.DateTimeFormat("en-IN", {
       timeZone: "Asia/Kolkata",
       year: "numeric",
       month: "numeric",
@@ -204,8 +203,10 @@ async function main() {
   renderReportsList(reportsData);
 
   // Hide reports loader and show reports data
-  document.getElementById("reports-loader").classList.add("d-none");
-  document.getElementById("main-content").classList.remove("d-none");
+  setTimeout(() => {
+    document.getElementById("reports-loader").classList.add("d-none");
+    document.getElementById("main-content").classList.remove("d-none");
+  }, 200);
 }
 
 main();
