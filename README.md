@@ -21,3 +21,7 @@ You will also see any lint errors in the console.
 "post-test-e2e": "npm run merge-cy:reports && npm run generate-cy:report && node cypress/support/scripts/copy-assets.js",
 "test-e2e": "run-s -c pre-test-e2e cy:run post-test-e2e",
 "test-e2e-gui": "run-s -c pre-test-e2e 'cy:run -- --headed' post-test-e2e",
+
+spec: |
+cypress/e2e/general/general.cy.ts
+cypress/e2e/create-dataset-flow/create-dataset-kafka/create-dataset-kafka.cy.ts
