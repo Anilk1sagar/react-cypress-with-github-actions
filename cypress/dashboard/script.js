@@ -1,3 +1,9 @@
+/*
+ * Copyright 2024 StarTree Inc.
+ *
+ * All rights reserved. Confidential and proprietary information of StarTree Inc.
+ */
+
 function getReportsFolders() {
   return fetch("./reports/e2e/tests-list.json")
     .then((response) => response.json())
@@ -17,7 +23,8 @@ async function getReportsData() {
 
   // Sort reports recent to oldest
   reportsData.sort((a, b) => b.folder.localeCompare(a.folder));
-  return reportsData;
+
+  return reportsData.slice(0, 10);
 }
 
 function formatDuration(ms) {
@@ -60,13 +67,74 @@ function getFormattedDateTime(utcDate) {
   };
 
   // Format the date and time separately
-  const formattedDate = new Intl.DateTimeFormat("en-US", dateOptions).format(date);
-  const formattedTime = new Intl.DateTimeFormat("en-US", timeOptions).format(date);
+  const formattedDate = new Intl.DateTimeFormat("en-IN", dateOptions).format(date);
+  const formattedTime = new Intl.DateTimeFormat("en-IN", timeOptions).format(date);
 
   // Combine the date and time, and append "IST"
   const formattedIST = `${formattedDate} (${formattedTime} IST)`;
 
   return formattedIST;
+}
+
+function renderReportsChart(reportsData) {
+  const xAxisData = reportsData.map((report) => {
+    const date = new Date(report.data.stats.end);
+
+    const formattedDate = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    }).format(new Date(date));
+
+    const formattedTime = new Intl.DateTimeFormat("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false, // Use 24-hour format
+    }).format(new Date(date));
+
+    return `${formattedDate} (${formattedTime} IST)`;
+  });
+
+  const trace1YData = reportsData.map((report) => report.data.stats.passes);
+  const trace2YData = reportsData.map((report) => report.data.stats.failures);
+
+  const trace1 = {
+    x: xAxisData,
+    y: trace1YData,
+    name: "Passing",
+    type: "bar",
+    marker: {
+      color: "#198753",
+    },
+    width: 0.3,
+  };
+
+  const trace2 = {
+    x: xAxisData,
+    y: trace2YData,
+    name: "Failing",
+    type: "bar",
+    marker: {
+      color: "#DC3444",
+    },
+    width: 0.3,
+  };
+
+  const data = [trace1, trace2];
+
+  const config = {
+    responsive: true,
+  };
+
+  const layout = {
+    barmode: "stack",
+  };
+
+  setTimeout(function () {
+    Plotly.newPlot("reports-chart", data, layout, config);
+  }, 100);
 }
 
 function renderLastRunReport(report) {
@@ -125,6 +193,9 @@ function renderReportsList(reportsData) {
 async function main() {
   const reportsData = await getReportsData();
   console.log("reportsData: ", reportsData);
+
+  // Render reports chart
+  renderReportsChart(reportsData);
 
   // Render last run report data
   renderLastRunReport(reportsData[0].data);
