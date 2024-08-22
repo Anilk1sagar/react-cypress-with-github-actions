@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - staging
-    paths:
-      - "cypress/**" # Specify the folder(s) you want to watch for changes
+    # paths:
+    #   - "cypress/**" # Specify the folder(s) you want to watch for changes
   # schedule:
   #   # Runs every 5 minutes
   #   - cron: "*/5 * * * *"
